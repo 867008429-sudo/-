@@ -678,7 +678,8 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -769,7 +770,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
@@ -852,6 +853,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
+--- !u!134 &1241544978
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1001 &1402827283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -993,6 +1006,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerArmature
       objectReference: {fileID: 0}
+    - target: {fileID: 4416926081852918491, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 1241544978}
     m_RemovedComponents:
     - {fileID: 4416926081852918490, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
@@ -1033,7 +1051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sanityCost: 10
-  duration: 0.35
+  duration: 0.68
   animatorTrigger: TriggerParry
 --- !u!114 &1762682267
 MonoBehaviour:
@@ -1048,8 +1066,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sanityCost: 15
-  duration: 0.45
-  dodgeSpeed: 8
+  duration: 0.55
+  dodgeSpeed: 6.5
   animatorTrigger: TriggerDodge
 --- !u!114 &1762682268
 MonoBehaviour:
@@ -1157,7 +1175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockOnKey: 9
   jumpKey: 32
-  parryKey: 304
+  parryKey: 102
   sprintAndDodgeKey: 304
   crouchKey: 306
   alternateCrouchKey: 99
@@ -1189,6 +1207,10 @@ MonoBehaviour:
   jumpParameter: Jump
   freeFallParameter: FreeFall
   transformTriggerParameter: TriggerTransform
+  dodgeLeftStateName: Dodge_Left
+  dodgeRightStateName: Dodge_Right
+  dodgeBackwardStateName: Dodge_Backward
+  dodgeDirectionThreshold: 0.35
   invokeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &1762682276
 MonoBehaviour:
@@ -1238,13 +1260,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightSanityCost: 6
   lightDamage: 12
-  lightDuration: 0.32
-  lightHitTime: 0.12
+  lightDuration: 0.82
+  lightHitTime: 0.32
   lightSummonGain: 8
   heavySanityCost: 14
   heavyDamage: 28
-  heavyDuration: 0.58
-  heavyHitTime: 0.24
+  heavyDuration: 1.12
+  heavyHitTime: 0.52
   heavySummonGain: 18
   hitRadius: 0.65
   hitForwardOffset: 1.05

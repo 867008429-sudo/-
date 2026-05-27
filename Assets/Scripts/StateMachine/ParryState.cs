@@ -10,7 +10,7 @@ namespace HuanXian.StateMachine
     public sealed class ParryState : MonoBehaviour
     {
         [SerializeField] private float sanityCost = 10f;
-        [SerializeField] private float duration = 0.35f;
+        [SerializeField] private float duration = 0.68f;
         [SerializeField] private string animatorTrigger = "TriggerParry";
 
         private PlayerInputReader _inputReader;

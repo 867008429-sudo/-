@@ -78,3 +78,6 @@
 - Added Any State transitions for `TriggerParry -> Parry_Block` and `TriggerTransform -> Invoke_Transform`.
 - Added exit-time return transitions from one-shot combat states back to `Idle Walk Run Blend`.
 - Verified via Unity MCP that all required states have motions and both triggers exist; Console check returned 0 entries.
+- Fixed first-play Mixamo retargeting issue where attack/dodge poses could pull the humanoid below the ground by baking Root Rotation, Root Position Y, and Root Position XZ into pose for all staged Mixamo clips.
+- Tuned combat animation playback speeds and prototype action windows so light attack, heavy attack, dodge, parry, and invoke poses are visible in the current controller.
+- Restored parry input to `F` in `PlayerArmature` scene/prefab settings to avoid conflicting with Shift sprint/dodge.

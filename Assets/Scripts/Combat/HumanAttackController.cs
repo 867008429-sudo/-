@@ -12,15 +12,15 @@ namespace HuanXian.Combat
         [Header("Light Attack")]
         [SerializeField] private float lightSanityCost = 6f;
         [SerializeField] private float lightDamage = 12f;
-        [SerializeField] private float lightDuration = 0.32f;
-        [SerializeField] private float lightHitTime = 0.12f;
+        [SerializeField] private float lightDuration = 0.82f;
+        [SerializeField] private float lightHitTime = 0.32f;
         [SerializeField] private float lightSummonGain = 8f;
 
         [Header("Heavy Attack")]
         [SerializeField] private float heavySanityCost = 14f;
         [SerializeField] private float heavyDamage = 28f;
-        [SerializeField] private float heavyDuration = 0.58f;
-        [SerializeField] private float heavyHitTime = 0.24f;
+        [SerializeField] private float heavyDuration = 1.12f;
+        [SerializeField] private float heavyHitTime = 0.52f;
         [SerializeField] private float heavySummonGain = 18f;
 
         [Header("Hit Detection")]

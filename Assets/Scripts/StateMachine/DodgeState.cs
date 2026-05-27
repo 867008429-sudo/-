@@ -12,8 +12,8 @@ namespace HuanXian.StateMachine
     public sealed class DodgeState : MonoBehaviour
     {
         [SerializeField] private float sanityCost = 15f;
-        [SerializeField] private float duration = 0.28f;
-        [SerializeField] private float dodgeSpeed = 8f;
+        [SerializeField] private float duration = 0.55f;
+        [SerializeField] private float dodgeSpeed = 6.5f;
         [SerializeField] private string animatorTrigger = "TriggerDodge";
 
         private PlayerInputReader _inputReader;
