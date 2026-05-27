@@ -170,6 +170,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+--- !u!134 &433771551
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance)'
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1 &542508511
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,18 +865,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
---- !u!134 &1241544978
-PhysicMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  dynamicFriction: 0.6
-  staticFriction: 0.6
-  bounciness: 0
-  frictionCombine: 0
-  bounceCombine: 0
 --- !u!1001 &1402827283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1010,7 +1010,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1241544978}
+      objectReference: {fileID: 433771551}
     m_RemovedComponents:
     - {fileID: 4416926081852918490, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
@@ -1069,6 +1069,10 @@ MonoBehaviour:
   duration: 0.55
   dodgeSpeed: 6.5
   animatorTrigger: TriggerDodge
+  dodgeLeftStateName: Dodge_Left
+  dodgeRightStateName: Dodge_Right
+  dodgeBackwardStateName: Dodge_Backward
+  dodgeDirectionThreshold: 0.35
 --- !u!114 &1762682268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1207,10 +1211,7 @@ MonoBehaviour:
   jumpParameter: Jump
   freeFallParameter: FreeFall
   transformTriggerParameter: TriggerTransform
-  dodgeLeftStateName: Dodge_Left
-  dodgeRightStateName: Dodge_Right
   dodgeBackwardStateName: Dodge_Backward
-  dodgeDirectionThreshold: 0.35
   invokeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &1762682276
 MonoBehaviour:
@@ -1268,6 +1269,12 @@ MonoBehaviour:
   heavyDuration: 1.12
   heavyHitTime: 0.52
   heavySummonGain: 18
+  inputBufferDuration: 0.22
+  lightChainWindowStart: 0.42
+  heavyChainWindowStart: 0.68
+  lightLungeSpeed: 2.6
+  heavyLungeSpeed: 1.85
+  lungeDuration: 0.18
   hitRadius: 0.65
   hitForwardOffset: 1.05
   hitHeight: 1

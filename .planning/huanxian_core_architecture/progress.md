@@ -83,3 +83,4 @@
 - Restored parry input to `F` in `PlayerArmature` scene/prefab settings to avoid conflicting with Shift sprint/dodge.
 - Fixed follow-up combat feel: `PlayerInputReader` now executes before state components, Dodge locks the chosen animation state when entering, and Parry can cancel from the prototype human attack state.
 - Started the Black Myth: Wukong-inspired combat-feel pass: Shift dodge now fires on key-down instead of key-up, attack can be dodge-canceled, light/heavy attacks gain a short forward lunge, attacks rotate toward input direction on start, and light/heavy clicks can buffer a follow-up attack during the chain window.
+- Continued the combat-feel pass: tuned `PlayerFollowCamera` to FOV 48, stronger 3rd-person follow damping, slightly wider shoulder/arm framing, and no procedural noise; attacks now retain low-speed input drift after the opening lunge so the player is not hard-rooted during attack animations.

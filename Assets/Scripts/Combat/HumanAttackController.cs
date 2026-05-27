@@ -32,6 +32,9 @@ namespace HuanXian.Combat
         [SerializeField] private float lightLungeSpeed = 2.6f;
         [SerializeField] private float heavyLungeSpeed = 1.85f;
         [SerializeField] private float lungeDuration = 0.18f;
+        [SerializeField] private float lightAttackDriftSpeed = 1.8f;
+        [SerializeField] private float heavyAttackDriftSpeed = 1.15f;
+        [SerializeField] private float attackTurnSpeed = 900f;
 
         [Header("Hit Detection")]
         [SerializeField] private float hitRadius = 0.65f;
@@ -127,7 +130,7 @@ namespace HuanXian.Combat
                 _hitResolved = true;
             }
 
-            ApplyAttackLunge(elapsed);
+            ApplyAttackMovement(elapsed);
             TickBufferedAttack(elapsed);
 
             _remainingTime -= Time.deltaTime;
@@ -172,15 +175,22 @@ namespace HuanXian.Combat
             TryBeginAttack(queuedHeavyAttack);
         }
 
-        private void ApplyAttackLunge(float elapsed)
+        private void ApplyAttackMovement(float elapsed)
         {
-            if (elapsed > lungeDuration || _attackLungeDirection.sqrMagnitude <= 0.0001f)
+            if (elapsed <= lungeDuration && _attackLungeDirection.sqrMagnitude > 0.0001f)
             {
+                float lungeSpeed = _heavyAttack ? heavyLungeSpeed : lightLungeSpeed;
+                _motor.MoveHorizontal(_attackLungeDirection, lungeSpeed, Time.deltaTime);
                 return;
             }
 
-            float lungeSpeed = _heavyAttack ? heavyLungeSpeed : lightLungeSpeed;
-            _motor.MoveHorizontal(_attackLungeDirection, lungeSpeed, Time.deltaTime);
+            Vector3 driftDirection = ResolveAttackDirection(_inputReader.CurrentFrame.Move);
+            if (_inputReader.CurrentFrame.HasMoveInput)
+            {
+                RotateSmoothlyToAttackDirection(driftDirection);
+                float driftSpeed = _heavyAttack ? heavyAttackDriftSpeed : lightAttackDriftSpeed;
+                _motor.MoveHorizontal(driftDirection, driftSpeed, Time.deltaTime);
+            }
         }
 
         private void ResolveHit()
@@ -266,6 +276,20 @@ namespace HuanXian.Combat
             }
 
             transform.rotation = Quaternion.LookRotation(attackDirection, Vector3.up);
+        }
+
+        private void RotateSmoothlyToAttackDirection(Vector3 attackDirection)
+        {
+            if (attackDirection.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            Quaternion targetRotation = Quaternion.LookRotation(attackDirection, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                attackTurnSpeed * Time.deltaTime);
         }
 
         private void OnDrawGizmosSelected()
