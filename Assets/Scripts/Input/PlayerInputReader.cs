@@ -115,6 +115,7 @@ namespace HuanXian.Input
             bool heavyAttackPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
             bool jumpPressed = WasKeyPressed(Key.Space);
             bool dodgePressed = UpdateShiftSprintAndDodge(
+                Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame,
                 Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed,
                 Keyboard.current != null && Keyboard.current.leftShiftKey.wasReleasedThisFrame);
             bool parryPressed = WasKeyPressed(Key.F);
@@ -241,6 +242,7 @@ namespace HuanXian.Input
                 : _look;
 
             bool dodgePressed = UpdateShiftSprintAndDodge(
+                UnityEngine.Input.GetKeyDown(sprintAndDodgeKey),
                 UnityEngine.Input.GetKey(sprintAndDodgeKey),
                 UnityEngine.Input.GetKeyUp(sprintAndDodgeKey));
 
@@ -259,19 +261,18 @@ namespace HuanXian.Input
                 UnityEngine.Input.GetKeyDown(descentInvokeKey));
         }
 
-        private bool UpdateShiftSprintAndDodge(bool shiftIsPressed, bool shiftWasReleasedThisFrame)
+        private bool UpdateShiftSprintAndDodge(bool shiftWasPressedThisFrame, bool shiftIsPressed, bool shiftWasReleasedThisFrame)
         {
-            bool dodgePressed = false;
-
-            if (shiftIsPressed)
+            if (shiftWasPressedThisFrame)
             {
-                if (!_shiftHeld)
-                {
-                    _shiftHeld = true;
-                    _shiftHeldTime = 0f;
-                    _sprintHeld = false;
-                }
+                _shiftHeld = true;
+                _shiftHeldTime = 0f;
+                _sprintHeld = false;
+                return true;
+            }
 
+            if (shiftIsPressed && _shiftHeld)
+            {
                 _shiftHeldTime += Time.deltaTime;
                 if (_shiftHeldTime > sprintThreshold)
                 {
@@ -281,13 +282,12 @@ namespace HuanXian.Input
 
             if (shiftWasReleasedThisFrame)
             {
-                dodgePressed = _shiftHeld && _shiftHeldTime < sprintThreshold;
                 _shiftHeld = false;
                 _shiftHeldTime = 0f;
                 _sprintHeld = false;
             }
 
-            return dodgePressed;
+            return false;
         }
     }
 }

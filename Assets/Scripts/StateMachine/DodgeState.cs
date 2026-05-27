@@ -58,7 +58,7 @@ namespace HuanXian.StateMachine
         private void TryEnterDodge()
         {
             PlayerInputFrame inputFrame = _inputReader.CurrentFrame;
-            if (!inputFrame.DodgePressed || !_stateMachine.CanMove)
+            if (!inputFrame.DodgePressed || !CanEnterDodge())
             {
                 return;
             }
@@ -163,6 +163,11 @@ namespace HuanXian.StateMachine
             }
 
             return dodgeBackwardStateName;
+        }
+
+        private bool CanEnterDodge()
+        {
+            return _stateMachine.CanMove || _stateMachine.CurrentState == EPlayerState.Attack;
         }
     }
 }

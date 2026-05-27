@@ -1,4 +1,5 @@
 using HuanXian.Input;
+using HuanXian.Movement;
 using HuanXian.StateMachine;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace HuanXian.Combat
     [RequireComponent(typeof(PlayerInputReader))]
     [RequireComponent(typeof(PlayerStateMachine))]
     [RequireComponent(typeof(CombatResourceController))]
+    [RequireComponent(typeof(CharacterMotor))]
     public sealed class HumanAttackController : MonoBehaviour
     {
         [Header("Light Attack")]
@@ -23,6 +25,14 @@ namespace HuanXian.Combat
         [SerializeField] private float heavyHitTime = 0.52f;
         [SerializeField] private float heavySummonGain = 18f;
 
+        [Header("Feel")]
+        [SerializeField] private float inputBufferDuration = 0.22f;
+        [SerializeField] private float lightChainWindowStart = 0.42f;
+        [SerializeField] private float heavyChainWindowStart = 0.68f;
+        [SerializeField] private float lightLungeSpeed = 2.6f;
+        [SerializeField] private float heavyLungeSpeed = 1.85f;
+        [SerializeField] private float lungeDuration = 0.18f;
+
         [Header("Hit Detection")]
         [SerializeField] private float hitRadius = 0.65f;
         [SerializeField] private float hitForwardOffset = 1.05f;
@@ -36,32 +46,39 @@ namespace HuanXian.Combat
         private PlayerInputReader _inputReader;
         private PlayerStateMachine _stateMachine;
         private CombatResourceController _resources;
+        private CharacterMotor _motor;
         private Animator _animator;
 
         private float _remainingTime;
         private float _hitMoment;
+        private float _attackDuration;
         private float _pendingDamage;
         private float _pendingSummonGain;
+        private float _queuedAttackTimer;
+        private bool _queuedHeavyAttack;
         private bool _hitResolved;
         private bool _heavyAttack;
+        private Vector3 _attackLungeDirection;
 
         private void Awake()
         {
             _inputReader = GetComponent<PlayerInputReader>();
             _stateMachine = GetComponent<PlayerStateMachine>();
             _resources = GetComponent<CombatResourceController>();
+            _motor = GetComponent<CharacterMotor>();
             _animator = GetComponent<Animator>();
         }
 
         private void Update()
         {
+            PlayerInputFrame inputFrame = _inputReader.CurrentFrame;
             if (_stateMachine.CurrentState == EPlayerState.Attack)
             {
+                BufferAttackInput(inputFrame);
                 TickAttack();
                 return;
             }
 
-            PlayerInputFrame inputFrame = _inputReader.CurrentFrame;
             if (inputFrame.LightAttackPressed)
             {
                 TryBeginAttack(false);
@@ -86,11 +103,15 @@ namespace HuanXian.Combat
             }
 
             _heavyAttack = heavyAttack;
-            _remainingTime = heavyAttack ? heavyDuration : lightDuration;
+            _attackDuration = heavyAttack ? heavyDuration : lightDuration;
+            _remainingTime = _attackDuration;
             _hitMoment = heavyAttack ? heavyHitTime : lightHitTime;
             _pendingDamage = heavyAttack ? heavyDamage : lightDamage;
             _pendingSummonGain = heavyAttack ? heavySummonGain : lightSummonGain;
+            _queuedAttackTimer = 0f;
             _hitResolved = false;
+            _attackLungeDirection = ResolveAttackDirection(_inputReader.CurrentFrame.Move);
+            RotateToAttackDirection(_attackLungeDirection);
 
             _stateMachine.ForceState(EPlayerState.Attack);
             TryPlayAttackAnimation(heavyAttack);
@@ -99,12 +120,15 @@ namespace HuanXian.Combat
 
         private void TickAttack()
         {
-            float elapsed = (_heavyAttack ? heavyDuration : lightDuration) - _remainingTime;
+            float elapsed = _attackDuration - _remainingTime;
             if (!_hitResolved && elapsed >= _hitMoment)
             {
                 ResolveHit();
                 _hitResolved = true;
             }
+
+            ApplyAttackLunge(elapsed);
+            TickBufferedAttack(elapsed);
 
             _remainingTime -= Time.deltaTime;
             if (_remainingTime > 0f)
@@ -113,6 +137,50 @@ namespace HuanXian.Combat
             }
 
             _stateMachine.ReturnToLocomotion(_inputReader.CurrentFrame.HasMoveInput);
+        }
+
+        private void BufferAttackInput(PlayerInputFrame inputFrame)
+        {
+            if (inputFrame.LightAttackPressed)
+            {
+                _queuedAttackTimer = inputBufferDuration;
+                _queuedHeavyAttack = false;
+            }
+            else if (inputFrame.HeavyAttackPressed)
+            {
+                _queuedAttackTimer = inputBufferDuration;
+                _queuedHeavyAttack = true;
+            }
+        }
+
+        private void TickBufferedAttack(float elapsed)
+        {
+            if (_queuedAttackTimer <= 0f)
+            {
+                return;
+            }
+
+            _queuedAttackTimer -= Time.deltaTime;
+            float chainWindowStart = _heavyAttack ? heavyChainWindowStart : lightChainWindowStart;
+            if (elapsed < chainWindowStart)
+            {
+                return;
+            }
+
+            bool queuedHeavyAttack = _queuedHeavyAttack;
+            _stateMachine.ReturnToLocomotion(false);
+            TryBeginAttack(queuedHeavyAttack);
+        }
+
+        private void ApplyAttackLunge(float elapsed)
+        {
+            if (elapsed > lungeDuration || _attackLungeDirection.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            float lungeSpeed = _heavyAttack ? heavyLungeSpeed : lightLungeSpeed;
+            _motor.MoveHorizontal(_attackLungeDirection, lungeSpeed, Time.deltaTime);
         }
 
         private void ResolveHit()
@@ -158,6 +226,46 @@ namespace HuanXian.Combat
             {
                 _animator.CrossFade(stateHash, 0.05f);
             }
+        }
+
+        private Vector3 ResolveAttackDirection(Vector2 moveInput)
+        {
+            if (moveInput.sqrMagnitude <= 0.0001f)
+            {
+                return transform.forward;
+            }
+
+            Camera mainCamera = Camera.main;
+            Vector3 camForward = mainCamera != null ? mainCamera.transform.forward : transform.forward;
+            Vector3 camRight = mainCamera != null ? mainCamera.transform.right : transform.right;
+            camForward.y = 0f;
+            camRight.y = 0f;
+
+            if (camForward.sqrMagnitude <= 0.0001f)
+            {
+                camForward = transform.forward;
+                camForward.y = 0f;
+            }
+
+            if (camRight.sqrMagnitude <= 0.0001f)
+            {
+                camRight = transform.right;
+                camRight.y = 0f;
+            }
+
+            Vector3 direction = camForward.normalized * moveInput.y + camRight.normalized * moveInput.x;
+            direction.y = 0f;
+            return direction.sqrMagnitude > 0.0001f ? direction.normalized : transform.forward;
+        }
+
+        private void RotateToAttackDirection(Vector3 attackDirection)
+        {
+            if (attackDirection.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            transform.rotation = Quaternion.LookRotation(attackDirection, Vector3.up);
         }
 
         private void OnDrawGizmosSelected()
