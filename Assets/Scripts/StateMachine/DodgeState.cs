@@ -15,6 +15,10 @@ namespace HuanXian.StateMachine
         [SerializeField] private float duration = 0.55f;
         [SerializeField] private float dodgeSpeed = 6.5f;
         [SerializeField] private string animatorTrigger = "TriggerDodge";
+        [SerializeField] private string dodgeLeftStateName = "Dodge_Left";
+        [SerializeField] private string dodgeRightStateName = "Dodge_Right";
+        [SerializeField] private string dodgeBackwardStateName = "Dodge_Backward";
+        [SerializeField] private float dodgeDirectionThreshold = 0.35f;
 
         private PlayerInputReader _inputReader;
         private PlayerStateMachine _stateMachine;
@@ -25,6 +29,9 @@ namespace HuanXian.StateMachine
         private bool _hasTriggerParameter;
         private float _remainingTime;
         private Vector3 _dodgeDirection;
+        private string _currentDodgeAnimationStateName;
+
+        public string CurrentDodgeAnimationStateName => _currentDodgeAnimationStateName;
 
         private void Awake()
         {
@@ -61,9 +68,10 @@ namespace HuanXian.StateMachine
                 return;
             }
 
-            _stateMachine.ForceState(EPlayerState.Dodge);
             _remainingTime = duration;
             _dodgeDirection = ResolveDodgeDirection(inputFrame.Move);
+            _currentDodgeAnimationStateName = ResolveDodgeAnimationState(inputFrame.Move);
+            _stateMachine.ForceState(EPlayerState.Dodge);
 
             if (_animator != null && _hasTriggerParameter)
             {
@@ -140,6 +148,21 @@ namespace HuanXian.StateMachine
 
             direction.y = 0f;
             return direction.normalized;
+        }
+
+        private string ResolveDodgeAnimationState(Vector2 moveInput)
+        {
+            if (Mathf.Abs(moveInput.x) >= Mathf.Abs(moveInput.y) && Mathf.Abs(moveInput.x) >= dodgeDirectionThreshold)
+            {
+                return moveInput.x < 0f ? dodgeLeftStateName : dodgeRightStateName;
+            }
+
+            if (moveInput.y <= -dodgeDirectionThreshold)
+            {
+                return dodgeBackwardStateName;
+            }
+
+            return dodgeBackwardStateName;
         }
     }
 }

@@ -24,10 +24,7 @@ namespace HuanXian.Movement
         [SerializeField] private string transformTriggerParameter = "TriggerTransform";
 
         [Header("Dodge States")]
-        [SerializeField] private string dodgeLeftStateName = "Dodge_Left";
-        [SerializeField] private string dodgeRightStateName = "Dodge_Right";
         [SerializeField] private string dodgeBackwardStateName = "Dodge_Backward";
-        [SerializeField] private float dodgeDirectionThreshold = 0.35f;
 
         [Header("Invoke Feedback")]
         [SerializeField] private Color invokeColor = Color.yellow;
@@ -36,6 +33,7 @@ namespace HuanXian.Movement
         private PlayerInputReader _inputReader;
         private CharacterMotor _motor;
         private PlayerStateMachine _stateMachine;
+        private DodgeState _dodgeState;
         private Renderer[] _renderers;
 
         private int _speedHash;
@@ -58,6 +56,7 @@ namespace HuanXian.Movement
             _inputReader = GetComponent<PlayerInputReader>();
             _motor = GetComponent<CharacterMotor>();
             _stateMachine = GetComponent<PlayerStateMachine>();
+            _dodgeState = GetComponent<DodgeState>();
             _renderers = GetComponentsInChildren<Renderer>(true);
 
             CacheAnimatorParameters();
@@ -147,13 +146,7 @@ namespace HuanXian.Movement
 
         private void TryPlayDodgeAnimation()
         {
-            Vector2 moveInput = _inputReader.CurrentFrame.Move;
-            if (moveInput.x <= -dodgeDirectionThreshold && TryCrossFadeState(dodgeLeftStateName))
-            {
-                return;
-            }
-
-            if (moveInput.x >= dodgeDirectionThreshold && TryCrossFadeState(dodgeRightStateName))
+            if (_dodgeState != null && TryCrossFadeState(_dodgeState.CurrentDodgeAnimationStateName))
             {
                 return;
             }

@@ -81,3 +81,4 @@
 - Fixed first-play Mixamo retargeting issue where attack/dodge poses could pull the humanoid below the ground by baking Root Rotation, Root Position Y, and Root Position XZ into pose for all staged Mixamo clips.
 - Tuned combat animation playback speeds and prototype action windows so light attack, heavy attack, dodge, parry, and invoke poses are visible in the current controller.
 - Restored parry input to `F` in `PlayerArmature` scene/prefab settings to avoid conflicting with Shift sprint/dodge.
+- Fixed follow-up combat feel: `PlayerInputReader` now executes before state components, Dodge locks the chosen animation state when entering, and Parry can cancel from the prototype human attack state.

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace HuanXian.Input
 {
+    [DefaultExecutionOrder(-100)]
     public sealed class PlayerInputReader : MonoBehaviour
     {
         [Header("Fallback Keyboard Bindings")]

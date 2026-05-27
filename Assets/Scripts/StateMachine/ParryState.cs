@@ -45,7 +45,7 @@ namespace HuanXian.StateMachine
         private void TryEnterParry()
         {
             PlayerInputFrame inputFrame = _inputReader.CurrentFrame;
-            if (!inputFrame.ParryPressed || !_stateMachine.CanMove)
+            if (!inputFrame.ParryPressed || !CanEnterParry())
             {
                 return;
             }
@@ -62,6 +62,11 @@ namespace HuanXian.StateMachine
             {
                 _animator.SetTrigger(_triggerHash);
             }
+        }
+
+        private bool CanEnterParry()
+        {
+            return _stateMachine.CanMove || _stateMachine.CurrentState == EPlayerState.Attack;
         }
 
         private void TickParry()
