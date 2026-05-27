@@ -795,6 +795,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8944336655422409496, guid: f6d148d888ffbf54b9afe9936dfaec1f,
         type: 3}
+      propertyPath: field of view
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 8944336655422409496, guid: f6d148d888ffbf54b9afe9936dfaec1f,
+        type: 3}
       propertyPath: far clip plane
       value: 500
       objectReference: {fileID: 0}
@@ -816,17 +821,17 @@ PrefabInstance:
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.20000005
+      value: 0.07500002
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.375
+      value: 1.675
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4
+      value: -4.35
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f,
         type: 3}
@@ -885,17 +890,17 @@ PrefabInstance:
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.20000005
+      value: 0.07500002
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.375
+      value: 1.675
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4
+      value: -4.35
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
@@ -1133,6 +1138,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSanity: 100
   sanity: 100
+  sanityRegenPerSecond: 16
+  sanityRegenDelay: 0.7
   maxSummonGauge: 100
   summonGauge: 0
 --- !u!114 &1762682272
@@ -1259,7 +1266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77339f4a6f5e6544e8c4d0d0a3789650, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightSanityCost: 6
+  lightSanityCost: 0
   lightDamage: 12
   lightDuration: 0.82
   lightHitTime: 0.32
@@ -1275,6 +1282,9 @@ MonoBehaviour:
   lightLungeSpeed: 2.6
   heavyLungeSpeed: 1.85
   lungeDuration: 0.18
+  lightAttackDriftSpeed: 1.8
+  heavyAttackDriftSpeed: 1.15
+  attackTurnSpeed: 900
   hitRadius: 0.65
   hitForwardOffset: 1.05
   hitHeight: 1

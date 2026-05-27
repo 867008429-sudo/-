@@ -8,10 +8,14 @@ namespace HuanXian.Combat
         [Header("Sanity")]
         [SerializeField] private float maxSanity = 100f;
         [SerializeField] private float sanity = 100f;
+        [SerializeField] private float sanityRegenPerSecond = 16f;
+        [SerializeField] private float sanityRegenDelay = 0.7f;
 
         [Header("Summon Gauge")]
         [SerializeField] private float maxSummonGauge = 100f;
         [SerializeField] private float summonGauge;
+
+        private float _sanityRegenTimer;
 
         public event Action<float, float> SanityChanged;
         public event Action<float, float> SummonGaugeChanged;
@@ -26,6 +30,22 @@ namespace HuanXian.Combat
         {
             sanity = Mathf.Clamp(sanity, 0f, maxSanity);
             summonGauge = Mathf.Clamp(summonGauge, 0f, maxSummonGauge);
+        }
+
+        private void Update()
+        {
+            if (sanity >= maxSanity || sanityRegenPerSecond <= 0f)
+            {
+                return;
+            }
+
+            _sanityRegenTimer -= Time.deltaTime;
+            if (_sanityRegenTimer > 0f)
+            {
+                return;
+            }
+
+            ModifySanity(sanityRegenPerSecond * Time.deltaTime);
         }
 
         public float ModifySanity(float amount)
@@ -67,6 +87,11 @@ namespace HuanXian.Combat
             }
 
             ModifySanity(-amount);
+            if (amount > 0f)
+            {
+                _sanityRegenTimer = sanityRegenDelay;
+            }
+
             return true;
         }
 

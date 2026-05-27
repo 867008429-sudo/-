@@ -12,7 +12,7 @@ namespace HuanXian.Combat
     public sealed class HumanAttackController : MonoBehaviour
     {
         [Header("Light Attack")]
-        [SerializeField] private float lightSanityCost = 6f;
+        [SerializeField] private float lightSanityCost = 0f;
         [SerializeField] private float lightDamage = 12f;
         [SerializeField] private float lightDuration = 0.82f;
         [SerializeField] private float lightHitTime = 0.32f;
